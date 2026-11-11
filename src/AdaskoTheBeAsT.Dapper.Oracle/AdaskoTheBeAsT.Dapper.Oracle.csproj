@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net11.0;net10.0;net8.0;netstandard2.0;net461</TargetFrameworks>
+    <ProjectGuid>{D8D11AD7-B1E7-4B47-A412-06FC2075AED6}</ProjectGuid>
+    <RootNamespace>AdaskoTheBeAsT.Dapper.Oracle</RootNamespace>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryType>github</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <Title>AdaskoTheBeAsT.Dapper.Oracle</Title>
+    <Description>Oracle support for Dapper Micro ORM using Oracle.ManagedDataAccess or Oracle.DataAccess.</Description>
+    <Authors>DIPSAS;epaulsen;Adam "AdaskoTheBeAsT" Pluciński</Authors>
+    <Copyright>Copyright DIPS AS, Adam "AdaskoTheBeAsT" Pluciński</Copyright>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>atb.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.Oracle</PackageProjectUrl>
+    <PackageTags>Dapper;ORM;MicroORM;Oracle;ODP.NET;Oracle23ai;Vector;JSON;BulkInsert</PackageTags>
+    <PackageReleaseNotes>
+      - Support .NET 11, .NET 10, .NET 8, .NET Standard 2.0, and .NET Framework 4.6.1
+      - Full Oracle Database 23ai &amp; ODP.NET 23.x support (JSON, VECTOR, BOOLEAN, DateOnly, TimeOnly, UUIDv7 RAW(16))
+      - Fix InitialLOBFetchSize = -1, BindByName, OracleValueConverter, BooleanNumericTypeHandler, and cursor-sharing parameter sizing
+      - Update Dapper dependency to 2.1.89
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.89" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" Visible="false" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="..\..\doc\atb.png" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+</Project>

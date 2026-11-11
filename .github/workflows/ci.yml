@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main, master ]
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  checks: write
+  contents: read
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  build:
+    uses: AdaskoTheBeAsT/github-actions/.github/workflows/dotnet-build-sonarqube-nuget.yml@main
+    with:
+      dotnet_versions: ${{ vars.DOTNET_VERSIONS }}
+      runs_on: ${{ vars.RUNS_ON || 'ubuntu-latest' }}
+      solution_name: ${{ vars.SOLUTION_NAME || 'AdaskoTheBeAsT.Dapper.Oracle.sln' }}
+      sonar_organization: ${{ vars.SONAR_ORGANIZATION }}
+      sonar_project_key: ${{ vars.SONAR_PROJECT_KEY }}
+      sonar_provider: ${{ vars.SONAR_PROVIDER || 'sonarcloud' }}
+      test_frameworks: ${{ vars.TEST_FRAMEWORKS }}
+      tool_version_dotnet_coverage: ${{ vars.TOOL_VERSION_DOTNET_COVERAGE }}
+      tool_version_reportgenerator: ${{ vars.TOOL_VERSION_REPORTGENERATOR }}
+      tool_version_resharper: ${{ vars.TOOL_VERSION_RESHARPER }}
+      tool_version_sonar_scanner: ${{ vars.TOOL_VERSION_SONAR_SCANNER }}
+      use_global_json: ${{ vars.USE_GLOBAL_JSON == 'true' }}
+    secrets:
+      sonar_token: ${{ secrets.SONAR_TOKEN }}
+      nuget_user: ${{ secrets.NUGET_USER }}

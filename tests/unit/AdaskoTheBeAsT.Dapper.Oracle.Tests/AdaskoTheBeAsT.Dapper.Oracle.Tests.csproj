@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net11.0;net10.0;net8.0</TargetFrameworks>
+    <ProjectGuid>{8D6B3251-852F-45AB-A334-C0F3C1778D1A}</ProjectGuid>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.26.400" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\AdaskoTheBeAsT.Dapper.Oracle\AdaskoTheBeAsT.Dapper.Oracle.csproj" />
+  </ItemGroup>
+
+</Project>
