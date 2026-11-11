@@ -1,0 +1,87 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.12.12405.243 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A1000001-0000-4000-8000-000000000001}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A1000001-0000-4000-8000-000000000002}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit", "unit", "{A1000001-0000-4000-8000-000000000003}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "integ", "integ", "{A1000001-0000-4000-8000-000000000004}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaskoTheBeAsT.Dapper.Oracle", "src\AdaskoTheBeAsT.Dapper.Oracle\AdaskoTheBeAsT.Dapper.Oracle.csproj", "{D8D11AD7-B1E7-4B47-A412-06FC2075AED6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaskoTheBeAsT.Dapper.Oracle.StrongName", "src\AdaskoTheBeAsT.Dapper.Oracle.StrongName\AdaskoTheBeAsT.Dapper.Oracle.StrongName.csproj", "{0B6CCD06-2919-4D63-B5E6-404311DF6A64}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaskoTheBeAsT.Dapper.Oracle.Tests", "tests\unit\AdaskoTheBeAsT.Dapper.Oracle.Tests\AdaskoTheBeAsT.Dapper.Oracle.Tests.csproj", "{8D6B3251-852F-45AB-A334-C0F3C1778D1A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests", "tests\integ\AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests\AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.csproj", "{7F5E3F5A-6C49-4F02-8B78-4A9319E36B58}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".props", ".props", "{D2D1C0CA-A4EA-413B-9E2A-9397486652A3}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.runsettings = .runsettings
+		AGENTS.md = AGENTS.md
+		CHANGELOG.md = CHANGELOG.md
+		coverage.settings.xml = coverage.settings.xml
+		DeterministicBuild.targets = DeterministicBuild.targets
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		format.ps1 = format.ps1
+		global.json = global.json
+		LICENSE = LICENSE
+		README.md = README.md
+		SecurityCodeScan.config.yml = SecurityCodeScan.config.yml
+		Settings.StyleCop = Settings.StyleCop
+		SonarQube.Analysis.xml = SonarQube.Analysis.xml
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".props", ".props", "{BF69EC5C-586D-4A5B-B58E-281550E2663D}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8D11AD7-B1E7-4B47-A412-06FC2075AED6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8D11AD7-B1E7-4B47-A412-06FC2075AED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8D11AD7-B1E7-4B47-A412-06FC2075AED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8D11AD7-B1E7-4B47-A412-06FC2075AED6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B6CCD06-2919-4D63-B5E6-404311DF6A64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B6CCD06-2919-4D63-B5E6-404311DF6A64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B6CCD06-2919-4D63-B5E6-404311DF6A64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B6CCD06-2919-4D63-B5E6-404311DF6A64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D6B3251-852F-45AB-A334-C0F3C1778D1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D6B3251-852F-45AB-A334-C0F3C1778D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D6B3251-852F-45AB-A334-C0F3C1778D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D6B3251-852F-45AB-A334-C0F3C1778D1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F5E3F5A-6C49-4F02-8B78-4A9319E36B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F5E3F5A-6C49-4F02-8B78-4A9319E36B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F5E3F5A-6C49-4F02-8B78-4A9319E36B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F5E3F5A-6C49-4F02-8B78-4A9319E36B58}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A1000001-0000-4000-8000-000000000003} = {A1000001-0000-4000-8000-000000000002}
+		{A1000001-0000-4000-8000-000000000004} = {A1000001-0000-4000-8000-000000000002}
+		{D8D11AD7-B1E7-4B47-A412-06FC2075AED6} = {A1000001-0000-4000-8000-000000000001}
+		{0B6CCD06-2919-4D63-B5E6-404311DF6A64} = {A1000001-0000-4000-8000-000000000001}
+		{8D6B3251-852F-45AB-A334-C0F3C1778D1A} = {A1000001-0000-4000-8000-000000000003}
+		{7F5E3F5A-6C49-4F02-8B78-4A9319E36B58} = {A1000001-0000-4000-8000-000000000004}
+		{BF69EC5C-586D-4A5B-B58E-281550E2663D} = {A1000001-0000-4000-8000-000000000002}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F61EEFF4-7BC1-4F55-B078-8EC9F3C35EA8}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net11.0;net10.0;net8.0</TargetFrameworks>
+    <ProjectGuid>{7F5E3F5A-6C49-4F02-8B78-4A9319E36B58}</ProjectGuid>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.26.400" />
+    <PackageReference Include="Testcontainers.Oracle" Version="4.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\AdaskoTheBeAsT.Dapper.Oracle\AdaskoTheBeAsT.Dapper.Oracle.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="BulkSql\customers.json" />
+    <None Remove="Schema.sql" />
+    <EmbeddedResource Include="BulkSql\customers.json" />
+    <EmbeddedResource Include="Schema.sql" />
+  </ItemGroup>
+
+</Project>

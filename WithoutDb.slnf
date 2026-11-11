@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "AdaskoTheBeAsT.Dapper.Oracle.sln",
+    "projects": [
+      "src\\AdaskoTheBeAsT.Dapper.Oracle.StrongName\\AdaskoTheBeAsT.Dapper.Oracle.StrongName.csproj",
+      "src\\AdaskoTheBeAsT.Dapper.Oracle\\AdaskoTheBeAsT.Dapper.Oracle.csproj",
+      "tests\\unit\\AdaskoTheBeAsT.Dapper.Oracle.Tests\\AdaskoTheBeAsT.Dapper.Oracle.Tests.csproj"
+    ]
+  }
+}
