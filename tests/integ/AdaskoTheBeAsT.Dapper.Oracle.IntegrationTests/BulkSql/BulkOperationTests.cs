@@ -229,7 +229,7 @@ public class BulkOperationTests
                                        END IF;
                                END;
                                """;
-        await Fixture.Connection.ExecuteAsync(dropSql.Replace("\r\n", "\n"));
+        await Fixture.Connection.ExecuteAsync(dropSql.ReplaceOrdinal("\r\n", "\n"));
 
         const string createSql = """
                                  CREATE TABLE BULKMODERN23AI (
@@ -248,7 +248,7 @@ public class BulkOperationTests
                                      EMBEDDING64 VECTOR(2, FLOAT64) NOT NULL
                                  )
                                  """;
-        await Fixture.Connection.ExecuteAsync(createSql.Replace("\r\n", "\n"));
+        await Fixture.Connection.ExecuteAsync(createSql.ReplaceOrdinal("\r\n", "\n"));
 
         var rows = new List<ModernBulkRow>
         {
@@ -329,7 +329,7 @@ public class BulkOperationTests
                                        """;
 
         var result = await Fixture.Connection.SqlBulkAsync(
-            insertModernSql.Replace("\r\n", "\n"),
+            insertModernSql.ReplaceOrdinal("\r\n", "\n"),
             rows,
             mapping);
         result.ExecuteResult.Should().Be(2);

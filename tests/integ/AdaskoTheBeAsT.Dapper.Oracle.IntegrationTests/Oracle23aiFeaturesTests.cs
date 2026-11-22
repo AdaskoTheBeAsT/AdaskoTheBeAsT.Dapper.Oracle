@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.Util;
 #if NET10_0_OR_GREATER
 using AdaskoTheBeAsT.Dapper.Oracle.TypeHandler;
 #endif
@@ -33,7 +34,7 @@ public class Oracle23aiFeaturesTests
                                        END IF;
                                END;
                                """;
-        Fixture.Connection.Execute(dropSql.Replace("\r\n", "\n"));
+        Fixture.Connection.Execute(dropSql.ReplaceOrdinal("\r\n", "\n"));
 
         const string createSql = """
                                  CREATE TABLE Oracle23aiFeatureTest (
@@ -46,7 +47,7 @@ public class Oracle23aiFeaturesTests
                                      Embedding VECTOR(3, FLOAT32) NOT NULL
                                  )
                                  """;
-        Fixture.Connection.Execute(createSql.Replace("\r\n", "\n"));
+        Fixture.Connection.Execute(createSql.ReplaceOrdinal("\r\n", "\n"));
     }
 
     private DatabaseFixture Fixture { get; }
@@ -81,7 +82,7 @@ public class Oracle23aiFeaturesTests
                                  """;
 
         var inserted = Fixture.Connection.Execute(
-            insertSql.Replace("\r\n", "\n"),
+            insertSql.ReplaceOrdinal("\r\n", "\n"),
             insertParams);
         inserted.Should().Be(1);
 
@@ -105,7 +106,7 @@ public class Oracle23aiFeaturesTests
                                  """;
 
         var row = Fixture.Connection.QuerySingle<Oracle23aiProjection>(
-            selectSql.Replace("\r\n", "\n"),
+            selectSql.ReplaceOrdinal("\r\n", "\n"),
             selectParams);
 
         row.Id.Should().Be(1);

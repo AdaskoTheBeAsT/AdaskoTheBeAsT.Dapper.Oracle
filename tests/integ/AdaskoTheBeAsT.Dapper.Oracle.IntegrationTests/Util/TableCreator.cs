@@ -28,9 +28,9 @@ public static class TableCreator
                                            RAISE;
                                       END IF;
                           END;
-                      """.Replace("{tableName}", tableName);
+                      """.ReplaceOrdinal("{tableName}", tableName);
 
-        connection.Execute(dropSql.Replace("\r\n", "\n"));
+        connection.Execute(dropSql.ReplaceOrdinal("\r\n", "\n"));
 
         var list = columns.ToArray();
         var sb = new StringBuilder();
@@ -56,6 +56,6 @@ public static class TableCreator
             sb.AppendLine(")");
         }
 
-        connection.Execute(sb.ToString().Replace("\r\n", "\n"));
+        connection.Execute(sb.ToString().ReplaceOrdinal("\r\n", "\n"));
     }
 }
