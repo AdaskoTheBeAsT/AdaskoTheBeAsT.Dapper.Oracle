@@ -1,0 +1,36 @@
+<Solution>
+  <Folder Name="/.props/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path=".runsettings" />
+    <File Path="AGENTS.md" />
+    <File Path="CHANGELOG.md" />
+    <File Path="coverage.settings.xml" />
+    <File Path="DeterministicBuild.targets" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="format.ps1" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="SecurityCodeScan.config.yml" />
+    <File Path="Settings.StyleCop" />
+    <File Path="SonarQube.Analysis.xml" />
+    <File Path="stylecop.json" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/AdaskoTheBeAsT.Dapper.Oracle.StrongName/AdaskoTheBeAsT.Dapper.Oracle.StrongName.csproj" />
+    <Project Path="src/AdaskoTheBeAsT.Dapper.Oracle/AdaskoTheBeAsT.Dapper.Oracle.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/.props/">
+    <File Path="tests/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/tests/integ/">
+    <Project Path="tests/integ/AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests/AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/unit/">
+    <Project Path="tests/unit/AdaskoTheBeAsT.Dapper.Oracle.Tests/AdaskoTheBeAsT.Dapper.Oracle.Tests.csproj" />
+  </Folder>
+</Solution>
