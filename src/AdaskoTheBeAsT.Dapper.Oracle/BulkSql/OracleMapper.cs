@@ -7,7 +7,7 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.BulkSql;
 
 internal static class OracleMapper
 {
-    private static readonly Dictionary<Type, OracleMappingType> OracleMappings = new()
+    private static readonly Dictionary<Type, OracleMappingType> _oracleMappings = new()
     {
         {
             typeof(Guid), OracleMappingType.Raw
@@ -54,7 +54,7 @@ internal static class OracleMapper
         {
             typeof(double[]), OracleMappingType.VectorFloat64
         },
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
         {
             typeof(DateOnly), OracleMappingType.Date
         },
@@ -69,7 +69,7 @@ internal static class OracleMapper
         ThrowHelper.ThrowIfNull(type, nameof(type));
 
         var underlying = Nullable.GetUnderlyingType(type) ?? type;
-        return OracleMappings.TryGetValue(underlying, out var mapping) ? mapping : null;
+        return _oracleMappings.TryGetValue(underlying, out var mapping) ? mapping : null;
     }
 
     public static object? NormalizeBulkValue(
@@ -92,7 +92,7 @@ internal static class OracleMapper
             return boolValue ? 1 : 0;
         }
 
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
         if (value is DateOnly dateOnly)
         {
             return dateOnly.ToDateTime(TimeOnly.MinValue);

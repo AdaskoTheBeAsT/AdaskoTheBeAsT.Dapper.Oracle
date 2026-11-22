@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 using AwesomeAssertions;
 using Oracle.ManagedDataAccess.Client;
 using Xunit;
@@ -35,8 +36,8 @@ public class OracleDynamicParameterTests
         IDbCommand cmd,
         IOracleParameterRetretreiver retreiver)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
-        ArgumentNullException.ThrowIfNull(retreiver);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
+        ThrowHelper.ThrowIfNull(retreiver, nameof(retreiver));
 
         _testObject.Add("Foo", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.ReturnValue);
         _testObject.AddParam(cmd);
@@ -52,8 +53,8 @@ public class OracleDynamicParameterTests
         IDbCommand cmd,
         IOracleParameterRetretreiver retreiver)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
-        ArgumentNullException.ThrowIfNull(retreiver);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
+        ThrowHelper.ThrowIfNull(retreiver, nameof(retreiver));
 
         _testObject.Add("Foo", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.ReturnValue);
 
@@ -70,8 +71,8 @@ public class OracleDynamicParameterTests
         IDbCommand cmd,
         IOracleParameterRetretreiver retreiver)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
-        ArgumentNullException.ThrowIfNull(retreiver);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
+        ThrowHelper.ThrowIfNull(retreiver, nameof(retreiver));
 
         _testObject.Add("Foo", collectionType: OracleMappingCollectionType.PLSQLAssociativeArray);
 
@@ -87,8 +88,8 @@ public class OracleDynamicParameterTests
         IDbCommand cmd,
         IOracleParameterRetretreiver retreiver)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
-        ArgumentNullException.ThrowIfNull(retreiver);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
+        ThrowHelper.ThrowIfNull(retreiver, nameof(retreiver));
 
         _testObject.Add(
             "Foo",
@@ -121,7 +122,7 @@ public class OracleDynamicParameterTests
     [MemberData(nameof(OracleCommandFixture), DisableDiscoveryEnumeration = true)]
     public void SetBindByNameFalse(IDbCommand cmd)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
 
         _testObject.BindByName = true;
         _testObject.Add("Foo", "Bar");
@@ -134,7 +135,7 @@ public class OracleDynamicParameterTests
     [MemberData(nameof(OracleCommandFixture), DisableDiscoveryEnumeration = true)]
     public void SetBindByNameNotSet(IDbCommand cmd)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
 
         _testObject.BindByName = false;
         _testObject.Add("Foo", "Bar");
@@ -158,8 +159,8 @@ public class OracleDynamicParameterTests
         IDbCommand cmd,
         IOracleParameterRetretreiver retreiver)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
-        ArgumentNullException.ThrowIfNull(retreiver);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
+        ThrowHelper.ThrowIfNull(retreiver, nameof(retreiver));
 
         var bindSizeArray = Enumerable.Range(0, 20).ToArray();
         _testObject.Add("Foo", "Bar", arrayBindSize: bindSizeArray);
@@ -177,7 +178,7 @@ public class OracleDynamicParameterTests
     [MemberData(nameof(OracleCommandFixture), DisableDiscoveryEnumeration = true)]
     public void GetParameter_DoesNotReturnNull(IDbCommand cmd)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
 
         var bindSizeArray = Enumerable.Range(0, 20).ToArray();
         _testObject.Add("Foo", "Bar", arrayBindSize: bindSizeArray);

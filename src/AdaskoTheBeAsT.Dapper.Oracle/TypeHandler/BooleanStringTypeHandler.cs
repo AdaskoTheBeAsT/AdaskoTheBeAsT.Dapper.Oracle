@@ -7,27 +7,18 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.TypeHandler;
 /// <summary>
 /// Conversion between <see cref="bool"/> and Oracle VARCHAR2.
 /// </summary>
-public class BooleanStringTypeHandler : TypeHandlerBase<bool>
+/// <param name="trueValue">Value to use in database for a boolean true value.</param>
+/// <param name="falseValue">Value to use in database for a boolean false value.</param>
+/// <param name="comparison">String comparison mode.</param>
+public class BooleanStringTypeHandler(
+    string trueValue,
+    string falseValue,
+    StringComparison comparison = StringComparison.Ordinal)
+    : TypeHandlerBase<bool>
 {
-    private readonly string _trueString;
-    private readonly string _falseString;
-    private readonly StringComparison _compareMode;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BooleanStringTypeHandler"/> class.
-    /// </summary>
-    /// <param name="trueValue">Value to use in database for a boolean true value.</param>
-    /// <param name="falseValue">Value to use in database for a boolean false value.</param>
-    /// <param name="comparison">String comparison mode.</param>
-    public BooleanStringTypeHandler(
-        string trueValue,
-        string falseValue,
-        StringComparison comparison = StringComparison.Ordinal)
-    {
-        _trueString = trueValue ?? throw new ArgumentNullException(nameof(trueValue));
-        _falseString = falseValue ?? throw new ArgumentNullException(nameof(falseValue));
-        _compareMode = comparison;
-    }
+    private readonly string _trueString = trueValue ?? throw new ArgumentNullException(nameof(trueValue));
+    private readonly string _falseString = falseValue ?? throw new ArgumentNullException(nameof(falseValue));
+    private readonly StringComparison _compareMode = comparison;
 
     public override void SetValue(
         IDbDataParameter parameter,

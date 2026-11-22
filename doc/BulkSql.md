@@ -77,8 +77,8 @@ When you omit `dbType` on `BulkMapping<T>`, `BulkSql` automatically inspects you
 | `DateTime` / `DateTime?` | `TimeStamp` | Passed directly |
 | `DateTimeOffset` / `DateTimeOffset?` | `TimeStampTZ` | Preserves timezone offset |
 | `TimeSpan` / `TimeSpan?` | `IntervalDS` | Passed directly |
-| `DateOnly` / `DateOnly?` *(NET 8+)* | `Date` | Converted to midnight `DateTime` for ODP.NET |
-| `TimeOnly` / `TimeOnly?` *(NET 8+)* | `IntervalDS` | Converted to `TimeSpan` for ODP.NET |
+| `DateOnly` / `DateOnly?` *(`net10.0` and `net11.0`)* | `Date` | Converted to midnight `DateTime` for ODP.NET |
+| `TimeOnly` / `TimeOnly?` *(`net10.0` and `net11.0`)* | `IntervalDS` | Converted to `TimeSpan` for ODP.NET |
 | `float[]` | `VectorFloat32` | Ready for Oracle 23ai `VECTOR(*, FLOAT32)` columns 🧠 |
 | `double[]` | `VectorFloat64` | Ready for Oracle 23ai `VECTOR(*, FLOAT64)` columns 🧠 |
 

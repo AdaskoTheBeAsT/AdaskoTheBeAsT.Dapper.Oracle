@@ -72,8 +72,12 @@ public sealed class DatabaseFixture
     {
         if (_connection is not null)
         {
+#if NETCOREAPP3_0_OR_GREATER
             await _connection.CloseAsync().ConfigureAwait(false);
             await _connection.DisposeAsync().ConfigureAwait(false);
+#else
+            _connection.Dispose();
+#endif
             _connection = null;
         }
 

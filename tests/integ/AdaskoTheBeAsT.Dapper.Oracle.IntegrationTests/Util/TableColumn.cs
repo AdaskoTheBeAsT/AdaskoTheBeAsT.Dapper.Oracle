@@ -16,7 +16,7 @@ public class TableColumn
 
     public override string ToString()
     {
-        return string.Create(CultureInfo.InvariantCulture, $"{Name} {DataType}{GetSize()} {GetNullable(Nullable)}");
+        return $"{Name} {DataType}{GetSize()} {GetNullable(Nullable)}";
     }
 
     protected static string GetNullable(bool nullable)
@@ -31,6 +31,10 @@ public class TableColumn
             return string.Empty;
         }
 
+#if NET10_0_OR_GREATER
         return string.Create(CultureInfo.InvariantCulture, $"({Size})");
+#else
+        return $"({Size.ToString(CultureInfo.InvariantCulture)})";
+#endif
     }
 }

@@ -8,61 +8,50 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.BulkSql;
 /// Contains mapping between a property on <typeparamref name="T"/> and a database query parameter.
 /// </summary>
 /// <typeparam name="T">Entity type for mapping.</typeparam>
-public class BulkMapping<T>
+[SuppressMessage(
+    "Major Code Smell",
+    "S107:Methods should not have too many parameters",
+    Justification = "Preserves public Dapper.Oracle BulkMapping constructor signature compatibility.")]
+public class BulkMapping<T>(
+    string name,
+    Func<T, object?> property,
+    OracleMappingType? dbType = null,
+    ParameterDirection? direction = null,
+    int? size = null,
+    bool? isNullable = null,
+    byte? precision = null,
+    byte? scale = null,
+    string? sourceColumn = null,
+    DataRowVersion? sourceVersion = null,
+    OracleMappingCollectionType? collectionType = null,
+    int[]? arrayBindSize = null)
 {
-    public BulkMapping(
-        string name,
-        Func<T, object?> property,
-        OracleMappingType? dbType = null,
-        ParameterDirection? direction = null,
-        int? size = null,
-        bool? isNullable = null,
-        byte? precision = null,
-        byte? scale = null,
-        string? sourceColumn = null,
-        DataRowVersion? sourceVersion = null,
-        OracleMappingCollectionType? collectionType = null,
-        int[]? arrayBindSize = null)
-    {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Property = property;
-        ParameterDirection = direction ?? ParameterDirection.Input;
-        DbType = dbType;
-        Size = size;
-        IsNullable = isNullable ?? false;
-        Precision = precision;
-        Scale = scale;
-        SourceColumn = sourceColumn;
-        SourceVersion = sourceVersion ?? DataRowVersion.Current;
-        CollectionType = collectionType ?? OracleMappingCollectionType.None;
-        ArrayBindSize = arrayBindSize;
-    }
+    public string Name { get; set; } = name ?? throw new ArgumentNullException(nameof(name));
 
-    public string Name { get; set; }
+    public Func<T, object?>? Property { get; set; } = property;
 
-    public Func<T, object?>? Property { get; set; }
+    public ParameterDirection ParameterDirection { get; set; } = direction ?? ParameterDirection.Input;
 
-    public ParameterDirection ParameterDirection { get; set; }
+    public OracleMappingType? DbType { get; set; } = dbType;
 
-    public OracleMappingType? DbType { get; set; }
+    public int? Size { get; set; } = size;
 
-    public int? Size { get; set; }
+    public bool? IsNullable { get; set; } = isNullable ?? false;
 
-    public bool? IsNullable { get; set; }
+    public byte? Precision { get; set; } = precision;
 
-    public byte? Precision { get; set; }
+    public byte? Scale { get; set; } = scale;
 
-    public byte? Scale { get; set; }
+    public string? SourceColumn { get; set; } = sourceColumn;
 
-    public string? SourceColumn { get; set; }
+    public DataRowVersion SourceVersion { get; set; } = sourceVersion ?? DataRowVersion.Current;
 
-    public DataRowVersion SourceVersion { get; set; }
-
-    public OracleMappingCollectionType CollectionType { get; set; }
+    public OracleMappingCollectionType CollectionType { get; set; } =
+        collectionType ?? OracleMappingCollectionType.None;
 
     [SuppressMessage(
         "Performance",
         "CA1819:Properties should not return arrays",
         Justification = "Matches OracleParameter.ArrayBindSize.")]
-    public int[]? ArrayBindSize { get; set; }
+    public int[]? ArrayBindSize { get; set; } = arrayBindSize;
 }

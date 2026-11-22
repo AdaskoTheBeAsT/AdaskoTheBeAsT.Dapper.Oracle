@@ -1,3 +1,4 @@
+#if NET10_0_OR_GREATER
 using System;
 using AdaskoTheBeAsT.Dapper.Oracle.TypeHandler;
 using AwesomeAssertions;
@@ -34,3 +35,4 @@ public class DateOnlyTypeHandlerTests
         sut.Parse("2026-04-15").Should().Be(expected);
     }
 }
+#endif

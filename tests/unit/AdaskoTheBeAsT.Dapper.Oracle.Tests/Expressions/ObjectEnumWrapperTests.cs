@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using AdaskoTheBeAsT.Dapper.Oracle.Expressions;
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 using AwesomeAssertions;
 using Xunit;
 
@@ -12,7 +13,7 @@ public class ObjectEnumWrapperTests : ParameterBaseTests
     [MemberData(nameof(OracleDataFixture), DisableDiscoveryEnumeration = true)]
     public void BasicTest(IDbCommand cmd)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
 
         var param = cmd.CreateParameter();
         var setter = new ObjectEnumWrapper<IDbDataParameter, OracleMappingType>(

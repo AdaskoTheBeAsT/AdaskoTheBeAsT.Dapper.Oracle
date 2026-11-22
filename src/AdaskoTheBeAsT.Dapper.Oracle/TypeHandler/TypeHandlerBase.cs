@@ -15,6 +15,10 @@ public abstract class TypeHandlerBase<T> : SqlMapper.TypeHandler<T>
         "CC0091:Use static method",
         Justification = "Preserves protected instance API for derived type handlers.")]
     [SuppressMessage(
+        "Design",
+        "MA0038:Make method static",
+        Justification = "Preserves protected instance API for derived type handlers.")]
+    [SuppressMessage(
         "Minor Code Smell",
         "S2325:Methods and properties that don't access instance data should be static",
         Justification = "Preserves protected instance API for derived type handlers.")]

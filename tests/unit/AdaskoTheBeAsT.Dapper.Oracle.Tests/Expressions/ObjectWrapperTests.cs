@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Linq;
 using AdaskoTheBeAsT.Dapper.Oracle.Expressions;
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 using AwesomeAssertions;
 using Xunit;
 
@@ -9,15 +10,13 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.Tests.Expressions;
 
 public class ObjectWrapperTests : ParameterBaseTests
 {
-    private interface ITestClass
-    {
-    }
+    private interface ITestClass;
 
     [Theory]
     [MemberData(nameof(OracleDataFixture), DisableDiscoveryEnumeration = true)]
     public void Test(IDbCommand cmd)
     {
-        ArgumentNullException.ThrowIfNull(cmd);
+        ThrowHelper.ThrowIfNull(cmd, nameof(cmd));
 
         var param = cmd.CreateParameter();
         var wrapper = new ObjectWrapper<IDbDataParameter, int>("Size", param.GetType());

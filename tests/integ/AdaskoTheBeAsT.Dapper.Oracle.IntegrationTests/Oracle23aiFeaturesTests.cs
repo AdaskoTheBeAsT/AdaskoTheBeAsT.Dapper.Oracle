@@ -1,6 +1,9 @@
 using System;
 using System.Data;
+#if NET10_0_OR_GREATER
 using AdaskoTheBeAsT.Dapper.Oracle.TypeHandler;
+#endif
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 using AwesomeAssertions;
 using Dapper;
 using Xunit;
@@ -12,11 +15,13 @@ public class Oracle23aiFeaturesTests
 {
     public Oracle23aiFeaturesTests(DatabaseFixture fixture)
     {
-        ArgumentNullException.ThrowIfNull(fixture);
+        ThrowHelper.ThrowIfNull(fixture, nameof(fixture));
 
         Fixture = fixture;
+#if NET10_0_OR_GREATER
         OracleTypeMapper.AddTypeHandler<DateOnly>(new DateOnlyTypeHandler());
         OracleTypeMapper.AddTypeHandler<TimeOnly>(new TimeOnlyTypeHandler());
+#endif
 
         const string dropSql = """
                                BEGIN
@@ -28,7 +33,7 @@ public class Oracle23aiFeaturesTests
                                        END IF;
                                END;
                                """;
-        Fixture.Connection.Execute(dropSql.Replace("\r\n", "\n", StringComparison.Ordinal));
+        Fixture.Connection.Execute(dropSql.Replace("\r\n", "\n"));
 
         const string createSql = """
                                  CREATE TABLE Oracle23aiFeatureTest (
@@ -41,7 +46,7 @@ public class Oracle23aiFeaturesTests
                                      Embedding VECTOR(3, FLOAT32) NOT NULL
                                  )
                                  """;
-        Fixture.Connection.Execute(createSql.Replace("\r\n", "\n", StringComparison.Ordinal));
+        Fixture.Connection.Execute(createSql.Replace("\r\n", "\n"));
     }
 
     private DatabaseFixture Fixture { get; }
@@ -50,8 +55,8 @@ public class Oracle23aiFeaturesTests
     [Trait("Category", "Integration")]
     public void InsertAndQuery_Oracle23aiNativeTypesAndInlineLobFetch()
     {
-        var expectedDate = new DateOnly(2026, 4, 15);
-        var expectedTime = new TimeOnly(14, 30, 45);
+        var expectedDate = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Unspecified);
+        var expectedTime = new TimeSpan(14, 30, 45);
         var expectedNotes = new string('N', 12_000);
         float[] expectedVector = [0.25f, 0.5f, 0.75f];
 
@@ -61,8 +66,8 @@ public class Oracle23aiFeaturesTests
         };
         insertParams.Add("Id", 1, OracleMappingType.Int32);
         insertParams.Add("IsActive", value: true, OracleMappingType.Boolean);
-        insertParams.Add("EventDate", expectedDate.ToDateTime(TimeOnly.MinValue), OracleMappingType.Date);
-        insertParams.Add("EventTime", expectedTime.ToTimeSpan(), OracleMappingType.IntervalDS);
+        insertParams.Add("EventDate", expectedDate, OracleMappingType.Date);
+        insertParams.Add("EventTime", expectedTime, OracleMappingType.IntervalDS);
         insertParams.Add("Payload", "{\"tier\":\"gold\"}", OracleMappingType.Json);
         insertParams.Add("LargeNotes", expectedNotes, OracleMappingType.Clob);
         insertParams.Add("Embedding", expectedVector, OracleMappingType.VectorFloat32);
@@ -76,7 +81,7 @@ public class Oracle23aiFeaturesTests
                                  """;
 
         var inserted = Fixture.Connection.Execute(
-            insertSql.Replace("\r\n", "\n", StringComparison.Ordinal),
+            insertSql.Replace("\r\n", "\n"),
             insertParams);
         inserted.Should().Be(1);
 
@@ -100,12 +105,17 @@ public class Oracle23aiFeaturesTests
                                  """;
 
         var row = Fixture.Connection.QuerySingle<Oracle23aiProjection>(
-            selectSql.Replace("\r\n", "\n", StringComparison.Ordinal),
+            selectSql.Replace("\r\n", "\n"),
             selectParams);
 
         row.Id.Should().Be(1);
+#if NET10_0_OR_GREATER
+        row.EventDate.Should().Be(DateOnly.FromDateTime(expectedDate));
+        row.EventTime.Should().Be(TimeOnly.FromTimeSpan(expectedTime));
+#else
         row.EventDate.Should().Be(expectedDate);
         row.EventTime.Should().Be(expectedTime);
+#endif
         row.PayloadJson.Should().Contain("\"tier\":\"gold\"");
         row.LargeNotes.Should().Be(expectedNotes);
     }

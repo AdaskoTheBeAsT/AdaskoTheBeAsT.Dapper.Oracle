@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net11.0;net10.0;net8.0;netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0;net481;net48;net472;netstandard2.0</TargetFrameworks>
     <ProjectGuid>{0B6CCD06-2919-4D63-B5E6-404311DF6A64}</ProjectGuid>
     <RootNamespace>AdaskoTheBeAsT.Dapper.Oracle</RootNamespace>
     <IsPackable>true</IsPackable>
@@ -28,10 +28,10 @@
     <PackageProjectUrl>https://github.com/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.Oracle</PackageProjectUrl>
     <PackageTags>Dapper;ORM;MicroORM;Oracle;ODP.NET;Oracle23ai;Vector;JSON;BulkInsert;StrongName</PackageTags>
     <PackageReleaseNotes>
-      - Support .NET 11, .NET 10, .NET 8, .NET Standard 2.0, and .NET Framework 4.6.1
+      - Support .NET 11, .NET 10, .NET Standard 2.0, and .NET Framework 4.8.1, 4.8, 4.7.2
       - Full Oracle Database 23ai &amp; ODP.NET 23.x support (JSON, VECTOR, BOOLEAN, DateOnly, TimeOnly, UUIDv7 RAW(16))
       - Fix InitialLOBFetchSize = -1, BindByName, OracleValueConverter, BooleanNumericTypeHandler, and cursor-sharing parameter sizing
-      - Update Dapper.StrongName dependency to 2.1.89
+      - Update Dapper.StrongName dependency to 2.1.100
     </PackageReleaseNotes>
   </PropertyGroup>
 
@@ -45,14 +45,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper.StrongName" Version="2.1.89" />
+    <PackageReference Include="Dapper.StrongName" Version="[2.1.100,3.0.0)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="[4.7.0,5.0.0)" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481' OR '$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'net472'">
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 

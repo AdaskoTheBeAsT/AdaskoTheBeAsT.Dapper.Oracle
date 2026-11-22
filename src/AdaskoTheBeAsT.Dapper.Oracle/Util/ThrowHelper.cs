@@ -1,16 +1,19 @@
 using System;
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-#endif
 
 namespace AdaskoTheBeAsT.Dapper.Oracle.Util;
 
 internal static class ThrowHelper
 {
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
     [SuppressMessage(
         "Minor Code Smell",
         "S3236:Caller information arguments should not be provided explicitly",
+        Justification = "Forwards explicit caller parameter name across multi-targeted ThrowHelper.")]
+#else
+    [SuppressMessage(
+        "Roslynator",
+        "RCS1256:Invalid argument null check",
         Justification = "Forwards explicit caller parameter name across multi-targeted ThrowHelper.")]
 #endif
     public static void ThrowIfNull(
@@ -20,7 +23,7 @@ internal static class ThrowHelper
         object? argument,
         string paramName)
     {
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(argument, paramName);
 #else
         if (argument is null)
@@ -30,7 +33,7 @@ internal static class ThrowHelper
 #endif
     }
 
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
     [SuppressMessage(
         "Minor Code Smell",
         "S3236:Caller information arguments should not be provided explicitly",
@@ -41,7 +44,7 @@ internal static class ThrowHelper
         string paramName)
         where T : class
     {
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(argument, paramName);
         return argument;
 #else

@@ -4,18 +4,14 @@ using System.Reflection;
 
 namespace AdaskoTheBeAsT.Dapper.Oracle.Util;
 
-internal sealed class PropertyWrapper<TObject, TValue>
+internal sealed class PropertyWrapper<TObject, TValue>(
+    PropertyInfo propertyInfo,
+    Type objectType)
 {
-    private readonly PropertyInfo _propertyInfo;
-    private readonly Type _objectType;
+    private readonly PropertyInfo _propertyInfo =
+        propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
-    public PropertyWrapper(
-        PropertyInfo propertyInfo,
-        Type objectType)
-    {
-        _propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
-        _objectType = objectType ?? throw new ArgumentNullException(nameof(objectType));
-    }
+    private readonly Type _objectType = objectType ?? throw new ArgumentNullException(nameof(objectType));
 
     public Func<TObject, TValue> CreateGetter()
     {

@@ -27,10 +27,12 @@ public class BulkSqlTests
         OracleMapper.GuessType(typeof(DateTime)).Should().Be(OracleMappingType.Date);
         OracleMapper.GuessType(typeof(DateTimeOffset)).Should().Be(OracleMappingType.TimeStampTZ);
         OracleMapper.GuessType(typeof(TimeSpan)).Should().Be(OracleMappingType.IntervalDS);
+#if NET10_0_OR_GREATER
         OracleMapper.GuessType(typeof(DateOnly)).Should().Be(OracleMappingType.Date);
         OracleMapper.GuessType(typeof(DateOnly?)).Should().Be(OracleMappingType.Date);
         OracleMapper.GuessType(typeof(TimeOnly)).Should().Be(OracleMappingType.IntervalDS);
         OracleMapper.GuessType(typeof(TimeOnly?)).Should().Be(OracleMappingType.IntervalDS);
+#endif
         OracleMapper.GuessType(typeof(bool)).Should().Be(OracleMappingType.Int16);
         OracleMapper.GuessType(typeof(float[])).Should().Be(OracleMappingType.VectorFloat32);
         OracleMapper.GuessType(typeof(double[])).Should().Be(OracleMappingType.VectorFloat64);
@@ -140,7 +142,7 @@ public class BulkSqlTests
     }
 
     [Fact]
-    public void OracleMapperCreate_NormalizesDateOnlyTimeOnlyAndNullableGuid()
+    public void OracleMapperCreate_NormalizesNullableValuesAndInfersVectorType()
     {
         var nullableId = Guid.NewGuid();
         var items = new List<ModernBulkSampleRow>
@@ -148,15 +150,15 @@ public class BulkSqlTests
             new()
             {
                 OptionalId = nullableId,
+#if NET10_0_OR_GREATER
                 BirthDate = new DateOnly(2026, 4, 15),
                 StartTime = new TimeOnly(9, 15, 0),
+#endif
                 Embedding = [0.1f, 0.2f, 0.3f],
             },
             new()
             {
                 OptionalId = null,
-                BirthDate = null,
-                StartTime = null,
                 Embedding = [0.4f, 0.5f, 0.6f],
             },
         };
@@ -176,6 +178,7 @@ public class BulkSqlTests
                     nullableId.ToByteArray(),
                     null,
                 });
+#if NET10_0_OR_GREATER
         command.Parameters["BirthDate"].OracleDbType.Should().Be(OracleDbType.Date);
         command.Parameters["BirthDate"]
             .Value.Should()
@@ -194,6 +197,7 @@ public class BulkSqlTests
                     new TimeSpan(9, 15, 0),
                     null,
                 });
+#endif
         command.Parameters["Embedding"].OracleDbType.Should().Be(OracleDbType.Vector_Float32);
     }
 
@@ -208,7 +212,7 @@ public class BulkSqlTests
 
         var syncResult = connection.SqlBulk(
             "INSERT INTO T(Id) VALUES (:Id)",
-            Array.Empty<BulkSampleRow>(),
+            [],
             mapping);
         syncResult.Should().Be(0);
     }
@@ -216,7 +220,11 @@ public class BulkSqlTests
     [Fact]
     public async Task SqlBulkAsync_EmptyObjects_DoesNotExecuteCommandAsync()
     {
+#if NETCOREAPP3_0_OR_GREATER
         await using var connection = new OracleConnection();
+#else
+        using var connection = new OracleConnection();
+#endif
         var mapping = new BulkMapping<BulkSampleRow>[]
         {
             new("Id", static x => x.Id),
@@ -224,7 +232,7 @@ public class BulkSqlTests
 
         var asyncResult = await connection.SqlBulkAsync(
             "INSERT INTO T(Id) VALUES (:Id)",
-            Array.Empty<BulkSampleRow>(),
+            [],
             mapping);
         asyncResult.ExecuteResult.Should().Be(0);
         asyncResult.Parameters.Should().NotBeNull();
@@ -246,10 +254,12 @@ public class BulkSqlTests
     {
         public Guid? OptionalId { get; set; }
 
+#if NET10_0_OR_GREATER
         public DateOnly? BirthDate { get; set; }
 
         public TimeOnly? StartTime { get; set; }
 
+#endif
         public float[]? Embedding { get; set; }
     }
 }

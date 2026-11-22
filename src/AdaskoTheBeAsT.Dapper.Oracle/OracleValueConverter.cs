@@ -10,14 +10,21 @@ namespace AdaskoTheBeAsT.Dapper.Oracle;
     "Performance",
     "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.",
     Justification =
-        "GeneratedRegex triggers AD0001 in IDisposableAnalyzers and is unavailable on netstandard2.0/net461.")]
+        "GeneratedRegex triggers AD0001 in IDisposableAnalyzers and is unavailable on .NET Standard 2.0 and .NET Framework.")]
+[SuppressMessage(
+    "Performance",
+    "MA0110:Use the Regex source generator",
+    Justification =
+        "GeneratedRegex triggers AD0001 in IDisposableAnalyzers and is unavailable on .NET Standard 2.0 and .NET Framework.")]
 [SuppressMessage(
     "ReflectionAnalyzers.SystemReflection",
     "REFL009:The referenced member is not known to exist",
     Justification = "Accesses Oracle ODP.NET value-type members dynamically without hard assembly reference.")]
 internal static class OracleValueConverter
 {
-    private static readonly Regex OracleTypeRegex = new(
+    private const string ValuePropertyName = "Value";
+
+    private static readonly Regex _oracleTypeRegex = new(
         @"Oracle\.\w+\.Types\.Oracle\w+",
         RegexOptions.Compiled | RegexOptions.CultureInvariant,
         TimeSpan.FromSeconds(1));
@@ -53,7 +60,7 @@ internal static class OracleValueConverter
         }
 
         var extracted = isOracleStructure
-            ? rawType.GetProperty("Value")?.GetValue(unwrapped) ?? unwrapped
+            ? rawType.GetProperty(ValuePropertyName)?.GetValue(unwrapped) ?? unwrapped
             : unwrapped;
 
         return ConvertExtracted<T>(extracted, targetType);
@@ -145,9 +152,9 @@ internal static class OracleValueConverter
             var oraDate = arr.GetValue(i)
                           ?? throw new InvalidOperationException(
                               "Cannot convert null OracleDate element to non-nullable DateTime.");
-            var valueProp = oraDate.GetType().GetProperty("Value")
+            var valueProp = oraDate.GetType().GetProperty(ValuePropertyName)
                             ?? throw new InvalidOperationException(
-                                $"Property 'Value' was not found on '{oraDate.GetType().FullName}'.");
+                                $"Property '{ValuePropertyName}' was not found on '{oraDate.GetType().FullName}'.");
             dateArray[i] = (DateTime)valueProp.GetValue(oraDate, index: null)!;
         }
 
@@ -170,7 +177,7 @@ internal static class OracleValueConverter
             var isNullValue = oraType.GetProperty("IsNull")?.GetValue(oraDate, index: null);
             if (isNullValue is false)
             {
-                dateArray[i] = (DateTime?)oraType.GetProperty("Value")?.GetValue(oraDate, index: null);
+                dateArray[i] = (DateTime?)oraType.GetProperty(ValuePropertyName)?.GetValue(oraDate, index: null);
             }
         }
 
@@ -238,7 +245,7 @@ internal static class OracleValueConverter
             return false;
         }
 
-        var dateValue = valueType.GetProperty("Value")?.GetValue(value);
+        var dateValue = valueType.GetProperty(ValuePropertyName)?.GetValue(value);
         var offsetMethod = valueType.GetMethod("GetTimeZoneOffset", Type.EmptyTypes);
         if (dateValue is DateTime dt
             && offsetMethod?.Invoke(value, parameters: null) is TimeSpan offset)
@@ -264,7 +271,7 @@ internal static class OracleValueConverter
             return true;
         }
 
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
         if (targetType == typeof(DateOnly)
             && extracted is DateTime dateValue)
         {
@@ -300,6 +307,6 @@ internal static class OracleValueConverter
             return false;
         }
 
-        return OracleTypeRegex.IsMatch(fullName);
+        return _oracleTypeRegex.IsMatch(fullName);
     }
 }

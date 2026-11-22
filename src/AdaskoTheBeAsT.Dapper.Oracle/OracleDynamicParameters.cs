@@ -22,7 +22,7 @@ public class OracleDynamicParameters
     : SqlMapper.IDynamicParameters,
         IEnumerable<KeyValuePair<string, OracleDynamicParameters.OracleParameterInfo>>
 {
-    private static readonly ConcurrentDictionary<SqlMapper.Identity, Action<IDbCommand, object>> ParamReaderCache =
+    private static readonly ConcurrentDictionary<SqlMapper.Identity, Action<IDbCommand, object>> _paramReaderCache =
         new();
 
     private List<object>? _templates;
@@ -67,7 +67,7 @@ public class OracleDynamicParameters
 
     public IEnumerable<string> ParameterNames => Parameters.Select(static p => p.Key);
 
-    private Dictionary<string, OracleParameterInfo> Parameters { get; } = new(StringComparer.Ordinal);
+    private Dictionary<string, OracleParameterInfo> Parameters { get; } = [with(StringComparer.Ordinal)];
 
     public void AddDynamicParams(dynamic? param)
     {
@@ -106,6 +106,11 @@ public class OracleDynamicParameters
         _templates.Add(obj);
     }
 
+    [SuppressMessage(
+        "Major Code Smell",
+        "S107:Methods should not have too many parameters",
+        Justification =
+            "Preserves Dapper DynamicParameters.Add parameter signature compatibility for Oracle metadata.")]
     public void Add(
         string name,
         object? value = null,
@@ -227,8 +232,7 @@ public class OracleDynamicParameters
 
         var val = param.Value;
         if (val != null
-            && OracleTypeMapper.HasTypeHandler(val.GetType(), out var handler)
-            && handler != null)
+            && OracleTypeMapper.Handlers.TryGetValue(val.GetType(), out var handler))
         {
             handler.SetValue(p, val);
         }
@@ -258,56 +262,71 @@ public class OracleDynamicParameters
         OracleParameterInfo param,
         object? value)
     {
-        if (value is string s)
+        if (value is string text)
         {
-            if (param.DbType is OracleMappingType.Clob
-                or OracleMappingType.NClob
-                or OracleMappingType.Json
-                or OracleMappingType.XmlType
-                or OracleMappingType.Long)
-            {
-                return;
-            }
-
-            if (param.DbType is OracleMappingType.NVarchar2 or OracleMappingType.NChar)
-            {
-                if (s.Length <= 2000)
-                {
-                    parameter.Size = 2000;
-                }
-                else if (s.Length <= 16383)
-                {
-                    parameter.Size = 16383;
-                }
-
-                return;
-            }
-
-            if (s.Length <= 4000)
-            {
-                parameter.Size = 4000;
-            }
-            else if (s.Length <= 32767)
-            {
-                parameter.Size = 32767;
-            }
-
+            ApplyDefaultStringParameterSize(parameter, param.DbType, text.Length);
             return;
         }
 
-        if (value == null
-            && param.ParameterDirection is ParameterDirection.Output
-                or ParameterDirection.InputOutput
-                or ParameterDirection.ReturnValue)
+        if (value == null)
         {
-            parameter.Size = param.DbType switch
-            {
-                OracleMappingType.Varchar2 or OracleMappingType.Char => 4000,
-                OracleMappingType.NVarchar2 or OracleMappingType.NChar => 2000,
-                OracleMappingType.Raw => 2000,
-                _ => parameter.Size,
-            };
+            ApplyDefaultNullOutputParameterSize(parameter, param);
         }
+    }
+
+    private static void ApplyDefaultStringParameterSize(
+        IDbDataParameter parameter,
+        OracleMappingType? dbType,
+        int length)
+    {
+        var defaultSize = dbType switch
+        {
+            OracleMappingType.Clob
+                or OracleMappingType.NClob
+                or OracleMappingType.Json
+                or OracleMappingType.XmlType
+                or OracleMappingType.Long => (int?)null,
+            OracleMappingType.NVarchar2 or OracleMappingType.NChar => GetBoundedSize(length, 2000, 16383),
+            _ => GetBoundedSize(length, 4000, 32767),
+        };
+
+        if (defaultSize.HasValue)
+        {
+            parameter.Size = defaultSize.Value;
+        }
+    }
+
+    private static int? GetBoundedSize(
+        int length,
+        int standardLimit,
+        int extendedLimit)
+    {
+        if (length <= standardLimit)
+        {
+            return standardLimit;
+        }
+
+        return length <= extendedLimit ? extendedLimit : null;
+    }
+
+    private static void ApplyDefaultNullOutputParameterSize(
+        IDbDataParameter parameter,
+        OracleParameterInfo param)
+    {
+        if (param.ParameterDirection is not (ParameterDirection.Output
+            or ParameterDirection.InputOutput
+            or ParameterDirection.ReturnValue))
+        {
+            return;
+        }
+
+        parameter.Size = param.DbType switch
+        {
+            OracleMappingType.Varchar2 or OracleMappingType.Char => 4000,
+            OracleMappingType.NVarchar2 or OracleMappingType.NChar => 2000,
+            OracleMappingType.Raw => 2000,
+            _ => parameter.Size,
+        };
     }
 
     private void ApplyCommandProperties(IDbCommand command)
@@ -357,7 +376,7 @@ public class OracleDynamicParameters
         foreach (var template in _templates)
         {
             var newIdent = resolvedIdentity.ForDynamicParameters(template.GetType());
-            var appender = ParamReaderCache.GetOrAdd(
+            var appender = _paramReaderCache.GetOrAdd(
                 newIdent,
                 static id => SqlMapper.CreateParamInfoGenerator(id, checkForDuplicates: false, removeUnused: false));
             appender(command, template);

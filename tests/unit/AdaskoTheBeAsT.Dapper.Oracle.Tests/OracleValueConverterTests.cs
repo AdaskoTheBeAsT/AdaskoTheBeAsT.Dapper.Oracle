@@ -71,7 +71,7 @@ public class OracleValueConverterTests
         {
             (OracleDate)DateTime.Now,
             (OracleDate)DateTime.Now.AddYears(1),
-            new OracleDate("10/29/2020 16:14:23"),
+            new("10/29/2020 16:14:23"),
         };
 
         var nullableOraDateArray = new OracleDate?[]
@@ -384,6 +384,7 @@ public class OracleValueConverterTests
         OracleValueConverter.Convert<Guid?>(OracleBinary.Null).Should().BeNull();
     }
 
+#if NET10_0_OR_GREATER
     [Fact]
     public void GetOracleTypesReturnDateOnlyAndTimeOnly()
     {
@@ -398,4 +399,5 @@ public class OracleValueConverterTests
             .Be(expectedTime);
         OracleValueConverter.Convert<TimeOnly?>(OracleIntervalDS.Null).Should().BeNull();
     }
+#endif
 }

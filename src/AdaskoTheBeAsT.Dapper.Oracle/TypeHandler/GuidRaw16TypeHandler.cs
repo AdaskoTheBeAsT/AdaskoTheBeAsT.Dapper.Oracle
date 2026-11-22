@@ -8,19 +8,14 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.TypeHandler;
 /// Conversion between <see cref="Guid"/> and <c>RAW(16)</c> Oracle data type.
 /// Supports both .NET default mixed-endian layout and RFC 4122 big-endian layout (recommended for UUIDv7 and cross-platform <c>RAW(16)</c> indexing).
 /// </summary>
-public class GuidRaw16TypeHandler : TypeHandlerBase<Guid>
+public class GuidRaw16TypeHandler(bool useBigEndian) : TypeHandlerBase<Guid>
 {
     public GuidRaw16TypeHandler()
         : this(useBigEndian: false)
     {
     }
 
-    public GuidRaw16TypeHandler(bool useBigEndian)
-    {
-        UseBigEndian = useBigEndian;
-    }
-
-    public bool UseBigEndian { get; }
+    public bool UseBigEndian { get; } = useBigEndian;
 
     public override void SetValue(
         IDbDataParameter parameter,
@@ -29,7 +24,7 @@ public class GuidRaw16TypeHandler : TypeHandlerBase<Guid>
         ThrowHelper.ThrowIfNull(parameter, nameof(parameter));
 
         SetOracleDbTypeOnParameter(parameter, "Raw", 16);
-#if NET8_0_OR_GREATER
+#if NET10_0_OR_GREATER
         parameter.Value = value.ToByteArray(UseBigEndian);
 #else
         var bytes = value.ToByteArray();
@@ -54,7 +49,7 @@ public class GuidRaw16TypeHandler : TypeHandlerBase<Guid>
 
         if (value is byte[] byteArray)
         {
-#if NET8_0_OR_GREATER
+#if NET10_0_OR_GREATER
             return new Guid(byteArray, UseBigEndian);
 #else
             if (!UseBigEndian
@@ -79,7 +74,7 @@ public class GuidRaw16TypeHandler : TypeHandlerBase<Guid>
         throw new NotSupportedException($"Dont know how to convert a {value.GetType().Name} to a System.Guid.");
     }
 
-#if !NET8_0_OR_GREATER
+#if !NET10_0_OR_GREATER
     private static void SwapEndianFields(byte[] bytes)
     {
         Swap(bytes, 0, 3);

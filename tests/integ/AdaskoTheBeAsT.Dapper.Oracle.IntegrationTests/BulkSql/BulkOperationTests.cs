@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using AdaskoTheBeAsT.Dapper.Oracle.BulkSql;
 using AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.Util;
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 using AwesomeAssertions;
 using Dapper;
 using Xunit;
@@ -20,7 +21,7 @@ public class BulkOperationTests
 
     public BulkOperationTests(DatabaseFixture fixture)
     {
-        ArgumentNullException.ThrowIfNull(fixture);
+        ThrowHelper.ThrowIfNull(fixture, nameof(fixture));
 
         Fixture = fixture;
 
@@ -228,7 +229,7 @@ public class BulkOperationTests
                                        END IF;
                                END;
                                """;
-        await Fixture.Connection.ExecuteAsync(dropSql.Replace("\r\n", "\n", StringComparison.Ordinal));
+        await Fixture.Connection.ExecuteAsync(dropSql.Replace("\r\n", "\n"));
 
         const string createSql = """
                                  CREATE TABLE BULKMODERN23AI (
@@ -247,13 +248,13 @@ public class BulkOperationTests
                                      EMBEDDING64 VECTOR(2, FLOAT64) NOT NULL
                                  )
                                  """;
-        await Fixture.Connection.ExecuteAsync(createSql.Replace("\r\n", "\n", StringComparison.Ordinal));
+        await Fixture.Connection.ExecuteAsync(createSql.Replace("\r\n", "\n"));
 
         var rows = new List<ModernBulkRow>
         {
             new()
             {
-#if NET9_0_OR_GREATER
+#if NET10_0_OR_GREATER
                 Id = Guid.CreateVersion7(),
 #else
                 Id = Guid.NewGuid(),
@@ -266,14 +267,19 @@ public class BulkOperationTests
                 NativeFlag = true,
                 CreatedAt = new DateTimeOffset(2026, 4, 18, 12, 0, 0, TimeSpan.FromHours(2)),
                 Duration = TimeSpan.FromMinutes(45),
+#if NET10_0_OR_GREATER
                 EventDate = new DateOnly(2026, 4, 18),
                 EventTime = new TimeOnly(9, 30, 0),
+#else
+                EventDate = new DateTime(2026, 4, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                EventTime = new TimeSpan(9, 30, 0),
+#endif
                 Embedding32 = [0.1f, 0.2f, 0.3f],
                 Embedding64 = [0.4d, 0.5d],
             },
             new()
             {
-#if NET9_0_OR_GREATER
+#if NET10_0_OR_GREATER
                 Id = Guid.CreateVersion7(),
 #else
                 Id = Guid.NewGuid(),
@@ -323,7 +329,7 @@ public class BulkOperationTests
                                        """;
 
         var result = await Fixture.Connection.SqlBulkAsync(
-            insertModernSql.Replace("\r\n", "\n", StringComparison.Ordinal),
+            insertModernSql.Replace("\r\n", "\n"),
             rows,
             mapping);
         result.ExecuteResult.Should().Be(2);
@@ -357,9 +363,9 @@ public class BulkOperationTests
 
     private static List<Customer> GetCustomersFromEmbeddedResource()
     {
-        using Stream stream = typeof(BulkOperationTests).Assembly.GetManifestResourceStream(
-                                  "AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.BulkSql.customers.json")
-                              ?? throw new InvalidOperationException("Embedded resource customers.json was not found.");
+        using var stream = typeof(BulkOperationTests).Assembly.GetManifestResourceStream(
+                               "AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.BulkSql.customers.json")
+                           ?? throw new InvalidOperationException("Embedded resource customers.json was not found.");
         return JsonSerializer.Deserialize<List<Customer>>(stream)
                ?? throw new InvalidOperationException("Failed to deserialize customers.json.");
     }
@@ -384,9 +390,15 @@ public class BulkOperationTests
 
         public TimeSpan Duration { get; set; }
 
+#if NET10_0_OR_GREATER
         public DateOnly? EventDate { get; set; }
 
         public TimeOnly? EventTime { get; set; }
+#else
+        public DateTime? EventDate { get; set; }
+
+        public TimeSpan? EventTime { get; set; }
+#endif
 
         public float[] Embedding32 { get; set; } = [];
 

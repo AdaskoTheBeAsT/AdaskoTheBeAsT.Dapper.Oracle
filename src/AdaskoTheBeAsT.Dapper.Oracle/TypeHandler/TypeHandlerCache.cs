@@ -8,7 +8,7 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.TypeHandler;
 
 internal static class TypeHandlerCache
 {
-    private static readonly ConcurrentDictionary<DictionaryKey, Action<IDbDataParameter>> OracleDbTypeProperty = new();
+    private static readonly ConcurrentDictionary<DictionaryKey, Action<IDbDataParameter>> _oracleDbTypeProperty = new();
 
     public static void SetOracleDbTypeOnParameter(
         IDbDataParameter parameter,
@@ -18,7 +18,7 @@ internal static class TypeHandlerCache
         ThrowHelper.ThrowIfNull(parameter, nameof(parameter));
         ThrowHelper.ThrowIfNull(oracleTypeName, nameof(oracleTypeName));
 
-        var setter = OracleDbTypeProperty.GetOrAdd(
+        var setter = _oracleDbTypeProperty.GetOrAdd(
             new DictionaryKey(parameter.GetType(), oracleTypeName),
             CreateSetTypeAction);
         setter(parameter);
@@ -44,19 +44,13 @@ internal static class TypeHandlerCache
         return Expression.Lambda<Action<IDbDataParameter>>(expression, inputVariable).Compile();
     }
 
-    private readonly struct DictionaryKey : IEquatable<DictionaryKey>
+    private readonly struct DictionaryKey(
+        Type parameterType,
+        string oracleTypeName) : IEquatable<DictionaryKey>
     {
-        public DictionaryKey(
-            Type parameterType,
-            string oracleTypeName)
-        {
-            ParameterType = parameterType;
-            OracleTypeName = oracleTypeName;
-        }
+        public Type ParameterType { get; } = parameterType;
 
-        public Type ParameterType { get; }
-
-        public string OracleTypeName { get; }
+        public string OracleTypeName { get; } = oracleTypeName;
 
         public bool Equals(DictionaryKey other)
         {

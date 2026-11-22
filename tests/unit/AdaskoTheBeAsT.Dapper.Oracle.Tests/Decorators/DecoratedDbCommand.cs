@@ -17,16 +17,13 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.Tests.Decorators;
     "Reliability",
     "CA2213:Disposable fields should be disposed",
     Justification = "Disposed in Dispose(bool).")]
-internal sealed class DecoratedDbCommand : DbCommand
+internal sealed class DecoratedDbCommand(DbCommand decorated) : DbCommand
 {
-    public DecoratedDbCommand(DbCommand decorated)
-    {
-        Decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
-    }
+    public DbCommand Decorated { get; } = decorated ?? throw new ArgumentNullException(nameof(decorated));
 
-    public DbCommand Decorated { get; }
-
+#if NETCOREAPP3_0_OR_GREATER
     [AllowNull]
+#endif
     [SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
 using System.Text;
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 using Dapper;
 
 namespace AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.Util;
@@ -15,9 +15,9 @@ public static class TableCreator
         string tableName,
         IEnumerable<TableColumn> columns)
     {
-        ArgumentNullException.ThrowIfNull(connection);
-        ArgumentNullException.ThrowIfNull(tableName);
-        ArgumentNullException.ThrowIfNull(columns);
+        ThrowHelper.ThrowIfNull(connection, nameof(connection));
+        ThrowHelper.ThrowIfNull(tableName, nameof(tableName));
+        ThrowHelper.ThrowIfNull(columns, nameof(columns));
 
         var dropSql = """
                       BEGIN
@@ -28,26 +28,34 @@ public static class TableCreator
                                            RAISE;
                                       END IF;
                           END;
-                      """.Replace("{tableName}", tableName, StringComparison.Ordinal);
+                      """.Replace("{tableName}", tableName);
 
-        connection.Execute(dropSql.Replace("\r\n", "\n", StringComparison.Ordinal));
+        connection.Execute(dropSql.Replace("\r\n", "\n"));
 
         var list = columns.ToArray();
         var sb = new StringBuilder();
 
-        sb.AppendLine(CultureInfo.InvariantCulture, $"CREATE TABLE {tableName}(");
+        sb.Append("CREATE TABLE ").Append(tableName).AppendLine("(");
+#if NETCOREAPP3_0_OR_GREATER
         sb.AppendJoin(",\n", list.Select(static c => c.ToString())).AppendLine();
+#else
+        sb.AppendLine(string.Join(",\n", list.Select(static c => c.ToString())));
+#endif
 
         if (Array.Exists(list, static l => l.PrimaryKey))
         {
+#if NETCOREAPP3_0_OR_GREATER
             var pkColumns = string.Join(',', list.Where(static l => l.PrimaryKey).Select(static c => c.Name));
-            sb.AppendLine(CultureInfo.InvariantCulture, $",CONSTRAINT pk_{tableName} PRIMARY KEY ({pkColumns}))");
+#else
+            var pkColumns = string.Join(",", list.Where(static l => l.PrimaryKey).Select(static c => c.Name));
+#endif
+            sb.Append(",CONSTRAINT pk_").Append(tableName).Append(" PRIMARY KEY (").Append(pkColumns).AppendLine("))");
         }
         else
         {
             sb.AppendLine(")");
         }
 
-        connection.Execute(sb.ToString().Replace("\r\n", "\n", StringComparison.Ordinal));
+        connection.Execute(sb.ToString().Replace("\r\n", "\n"));
     }
 }

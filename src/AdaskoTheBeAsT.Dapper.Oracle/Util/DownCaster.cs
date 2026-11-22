@@ -9,7 +9,7 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.Util;
 
 internal static class DownCaster<T>
 {
-    private static readonly ConcurrentDictionary<Type, (bool HasInner, Func<T, T>? Getter)> Cache = new();
+    private static readonly ConcurrentDictionary<Type, (bool HasInner, Func<T, T>? Getter)> _cache = new();
 
     internal static T DownCast(T item)
     {
@@ -24,14 +24,14 @@ internal static class DownCaster<T>
         }
 
         var type = item!.GetType();
-        var info = Cache.GetOrAdd(type, CreateAccessor);
-        if (!info.HasInner
-            || info.Getter == null)
+        var (hasInner, getter) = _cache.GetOrAdd(type, CreateAccessor);
+        if (!hasInner
+            || getter == null)
         {
             return item;
         }
 
-        return GetInner(info.Getter(item));
+        return GetInner(getter(item));
     }
 
     [SuppressMessage(

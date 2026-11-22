@@ -1,6 +1,6 @@
 # 🦁 AdaskoTheBeAsT.Dapper.Oracle
 
-> **Supercharged Oracle Database extensions for [Dapper](https://github.com/DapperLib/Dapper)** — built for **Oracle Database 23ai**, **ODP.NET (`Oracle.ManagedDataAccess.Core` 23.x)**, and **.NET 8 / 10 / 11** (plus `.NET Standard 2.0` & `.NET Framework 4.6.1`). 🚀
+> **Supercharged Oracle Database extensions for [Dapper](https://github.com/DapperLib/Dapper)** — built for **Oracle Database 23ai**, **ODP.NET 23.x**, and **.NET 10 / 11** (plus `.NET Standard 2.0` and `.NET Framework 4.7.2 / 4.8 / 4.8.1`). 🚀
 
 [![CI](https://github.com/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.Oracle/actions/workflows/ci.yml/badge.svg)](https://github.com/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.Oracle/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/AdaskoTheBeAsT.Dapper.Oracle.svg?logo=nuget)](https://www.nuget.org/packages/AdaskoTheBeAsT.Dapper.Oracle/)
@@ -44,8 +44,8 @@ dotnet add package AdaskoTheBeAsT.Dapper.Oracle.StrongName
 
 | 📦 Package | 🎯 Use Case | 🧩 Target Frameworks |
 | --- | --- | --- |
-| `AdaskoTheBeAsT.Dapper.Oracle` | Standard projects (recommended) | `net11.0`, `net10.0`, `net8.0`, `netstandard2.0`, `net461` |
-| `AdaskoTheBeAsT.Dapper.Oracle.StrongName` | Strong-name signed assemblies | `net11.0`, `net10.0`, `net8.0`, `netstandard2.0`, `net461` |
+| `AdaskoTheBeAsT.Dapper.Oracle` | Standard projects (recommended) | `net11.0`, `net10.0`, `net481`, `net48`, `net472`, `netstandard2.0` |
+| `AdaskoTheBeAsT.Dapper.Oracle.StrongName` | Strong-name signed assemblies | `net11.0`, `net10.0`, `net481`, `net48`, `net472`, `netstandard2.0` |
 
 > 💡 **Zero ODP.NET Version Lock-In!**
 > `AdaskoTheBeAsT.Dapper.Oracle` binds `OracleCommand` and `OracleParameter` properties via **cached, compiled expression trees** — meaning no hard dependency on a specific `Oracle.ManagedDataAccess.Core` version and near-zero reflection overhead at runtime! ⚡
@@ -105,7 +105,7 @@ All class names (`OracleDynamicParameters`, `OracleMappingType`, `OracleTypeMapp
   - `InitialLONGFetchSize` (`int?`, including `-1`), `FetchSize` (`long?`), and `AddToStatementCache` (`bool?`).
 - 🔌 **Modern .NET `TypeHandler` suite (`AdaskoTheBeAsT.Dapper.Oracle.TypeHandler`):**
   - `BooleanTypeHandler` — native Oracle 23ai SQL & PL/SQL `BOOLEAN` (`OracleDbType.Boolean`).
-  - `DateOnlyTypeHandler` & `TimeOnlyTypeHandler` (`.NET 8+`) — seamless `DateOnly` (`DATE`) and `TimeOnly` (`INTERVAL DAY TO SECOND`) support (raw ODP.NET rejects `DateOnly`/`TimeOnly` on `OracleParameter.Value`!).
+  - `DateOnlyTypeHandler` & `TimeOnlyTypeHandler` (`net10.0` and `net11.0`) — seamless `DateOnly` (`DATE`) and `TimeOnly` (`INTERVAL DAY TO SECOND`) support (raw ODP.NET rejects `DateOnly`/`TimeOnly` on `OracleParameter.Value`!).
   - `GuidRaw16TypeHandler(useBigEndian: true)` — RFC 4122 big-endian `RAW(16)` byte ordering so sequential `.NET 9+` `Guid.CreateVersion7()` keys stay **monotonically ordered in Oracle B-tree indexes** and match Oracle `HEXTORAW` / `SYS_GUID()` text order!
 - 📦 **Richer `BulkSql` (`SqlBulk` / `SqlBulkAsync`):**
   - Automatic type inference and array-bind normalization for `short`, `float`, `double`, `DateTimeOffset`, `TimeSpan`, `DateOnly`, `TimeOnly`, `float[]` (`VectorFloat32`), `double[]` (`VectorFloat64`), and nullable value types (`Guid?`, `DateOnly?`, `TimeOnly?`, `bool?`).
@@ -238,7 +238,7 @@ OracleTypeMapper.AddTypeHandler(new GuidRaw16TypeHandler(useBigEndian: true));
 // ✅ Native Oracle 23ai BOOLEAN (or BooleanNumericTypeHandler / BooleanStringTypeHandler for 19c schemas)
 OracleTypeMapper.AddTypeHandler(new BooleanTypeHandler());
 
-// 📅 .NET 8+ DateOnly (DATE) & TimeOnly (INTERVAL DAY TO SECOND)
+// 📅 .NET 10+ DateOnly (DATE) & TimeOnly (INTERVAL DAY TO SECOND)
 OracleTypeMapper.AddTypeHandler(new DateOnlyTypeHandler());
 OracleTypeMapper.AddTypeHandler(new TimeOnlyTypeHandler());
 ```
@@ -293,18 +293,22 @@ Console.WriteLine($"Inserted {result.ExecuteResult} rows in 1 round-trip!");
 
 ### Prerequisites
 
-- 🧰 **.NET 11 SDK** (`11.0.100`, configured via `global.json` with `rollForward: latestMajor`)
+- 🧰 **.NET 11 SDK** (`11.0.100`, configured via `global.json`) and the .NET 10 runtime for its tests
+- 🪟 **Windows** with .NET Framework 4.8.1 installed to run the .NET Framework test targets
 - 🐳 **Docker** (Linux containers) — only needed when running the Testcontainers **Oracle Database 23ai Free** integration tests
 
 ```powershell
 # 🎨 Format code (restores local tools + runs dotnet-format, ReSharper cleanupcode & StyleCop fixers)
 .\format.ps1
 
-# 🔨 Build entire solution (0 warnings, 0 errors enforced across all 5 TFMs)
+# 🔨 Build the entire solution, including the .NET Standard 2.0 libraries
 dotnet build AdaskoTheBeAsT.Dapper.Oracle.sln -c Release
 
 # ⚡ Run fast unit tests (no Docker or Oracle instance needed!)
 dotnet test --solution WithoutDb.slnf -c Release
+
+# Run unit tests for just one target framework
+dotnet test --solution WithoutDb.slnf -c Release -f net10.0
 
 # 🧪 Run full suite including Oracle Database 23ai Free Testcontainers integration tests
 dotnet test --solution AdaskoTheBeAsT.Dapper.Oracle.sln -c Release

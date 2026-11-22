@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using AdaskoTheBeAsT.Dapper.Oracle.BulkSql;
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 
 namespace AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.BulkSql;
 
@@ -9,7 +10,7 @@ public class CustomerDal
 {
     public CustomerDal(IDbConnection connection)
     {
-        ArgumentNullException.ThrowIfNull(connection);
+        ThrowHelper.ThrowIfNull(connection, nameof(connection));
         Connection = connection;
     }
 
@@ -17,7 +18,7 @@ public class CustomerDal
 
     public int InsertCustomers(IEnumerable<Customer> customers)
     {
-        ArgumentNullException.ThrowIfNull(customers);
+        ThrowHelper.ThrowIfNull(customers, nameof(customers));
 
         const string insertSql = """
                                  INSERT INTO BULKCUSTOMERS(CUSTOMERID,COMPANYNAME,ADDRESS,POSTALCODE,CITY, CONTACTNAME, CONTACTTITLE, Country, tidsstempel, opprettettid)

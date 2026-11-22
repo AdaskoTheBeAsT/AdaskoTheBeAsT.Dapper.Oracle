@@ -26,7 +26,7 @@ OracleTypeMapper.AddTypeHandler(new BooleanTypeHandler());                 // Or
 // OracleTypeMapper.AddTypeHandler(new BooleanNumericTypeHandler());       // Legacy NUMBER(1) (1 / 0)
 // OracleTypeMapper.AddTypeHandler(new BooleanStringTypeHandler("Y", "N")); // Legacy CHAR(1) / VARCHAR2
 
-// 📅 .NET 8+ DateOnly & TimeOnly
+// 📅 .NET 10+ DateOnly & TimeOnly
 OracleTypeMapper.AddTypeHandler(new DateOnlyTypeHandler());
 OracleTypeMapper.AddTypeHandler(new TimeOnlyTypeHandler());
 ```
@@ -44,8 +44,8 @@ OracleTypeMapper.AddTypeHandler(new TimeOnlyTypeHandler());
 | `BooleanTypeHandler` | `bool` | `BOOLEAN` *(Oracle 23ai)* | Binds `OracleDbType.Boolean` for Oracle 23ai SQL columns & PL/SQL parameters |
 | `BooleanNumericTypeHandler` | `bool` | `NUMBER(1)` / `NUMBER` | Writes `1` / `0`; safely parses `short`, `int`, `long`, `decimal`, `byte`, and `bool` |
 | `BooleanStringTypeHandler` | `bool` | `CHAR(1)` / `VARCHAR2` | Configurable true/false strings (e.g. `"Y"`/`"N"`, `"T"`/`"F"`, case-insensitive optional) |
-| `DateOnlyTypeHandler` *(NET 8+)* | `DateOnly` | `DATE` | Binds `OracleDbType.Date` at `00:00:00`; parses `DateTime`, `OracleDate`, and ISO strings |
-| `TimeOnlyTypeHandler` *(NET 8+)* | `TimeOnly` | `INTERVAL DAY TO SECOND` | Binds `OracleDbType.IntervalDS`; parses `TimeSpan`, `DateTime`, `OracleIntervalDS`, and strings |
+| `DateOnlyTypeHandler` *(`net10.0` and `net11.0`)* | `DateOnly` | `DATE` | Binds `OracleDbType.Date` at `00:00:00`; parses `DateTime`, `OracleDate`, and ISO strings |
+| `TimeOnlyTypeHandler` *(`net10.0` and `net11.0`)* | `TimeOnly` | `INTERVAL DAY TO SECOND` | Binds `OracleDbType.IntervalDS`; parses `TimeSpan`, `DateTime`, `OracleIntervalDS`, and strings |
 
 ---
 

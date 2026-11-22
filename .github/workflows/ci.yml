@@ -13,24 +13,37 @@ permissions:
   contents: read
   issues: write
   pull-requests: write
-  id-token: write
 
 jobs:
   build:
-    uses: AdaskoTheBeAsT/github-actions/.github/workflows/dotnet-build-sonarqube-nuget.yml@main
+    uses: AdaskoTheBeAsT/github-actions/.github/workflows/dotnet-build-sonarqube-nuget.yml@v2
     with:
-      dotnet_versions: ${{ vars.DOTNET_VERSIONS }}
+      dotnet_versions: ${{ vars.DOTNET_VERSIONS || '10.0.x' }}
       runs_on: ${{ vars.RUNS_ON || 'ubuntu-latest' }}
-      solution_name: ${{ vars.SOLUTION_NAME || 'AdaskoTheBeAsT.Dapper.Oracle.sln' }}
+      solution_name: ${{ vars.SOLUTION_NAME || 'AdaskoTheBeAsT.Dapper.Oracle.slnx' }}
       sonar_organization: ${{ vars.SONAR_ORGANIZATION }}
       sonar_project_key: ${{ vars.SONAR_PROJECT_KEY }}
       sonar_provider: ${{ vars.SONAR_PROVIDER || 'sonarcloud' }}
-      test_frameworks: ${{ vars.TEST_FRAMEWORKS }}
+      # Oracle Testcontainers use Linux; the .NET Framework targets are still built.
+      test_frameworks: ${{ vars.TEST_FRAMEWORKS || 'net10.0,net11.0' }}
       tool_version_dotnet_coverage: ${{ vars.TOOL_VERSION_DOTNET_COVERAGE }}
       tool_version_reportgenerator: ${{ vars.TOOL_VERSION_REPORTGENERATOR }}
       tool_version_resharper: ${{ vars.TOOL_VERSION_RESHARPER }}
       tool_version_sonar_scanner: ${{ vars.TOOL_VERSION_SONAR_SCANNER }}
-      use_global_json: ${{ vars.USE_GLOBAL_JSON == 'true' }}
+      use_global_json: ${{ vars.USE_GLOBAL_JSON != 'false' }}
     secrets:
       sonar_token: ${{ secrets.SONAR_TOKEN }}
-      nuget_user: ${{ secrets.NUGET_USER }}
+
+  publish:
+    needs: build
+    if: needs.build.outputs.is_lightweight_tag == 'true'
+    runs-on: ${{ vars.RUNS_ON || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Publish NuGet packages
+        uses: AdaskoTheBeAsT/github-actions/.github/actions/dotnet/publish-nuget-packages@v2
+        with:
+          artifact_name: ${{ needs.build.outputs.nuget_artifact_name }}
+          nuget_user: ${{ secrets.NUGET_USER }}

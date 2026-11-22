@@ -1,6 +1,7 @@
 using System;
 using AdaskoTheBeAsT.Dapper.Oracle.IntegrationTests.Util;
 using AdaskoTheBeAsT.Dapper.Oracle.TypeHandler;
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 using AwesomeAssertions;
 using Dapper;
 using Xunit;
@@ -14,7 +15,7 @@ public class GuidTypeMapperTests
 
     public GuidTypeMapperTests(DatabaseFixture fixture)
     {
-        ArgumentNullException.ThrowIfNull(fixture);
+        ThrowHelper.ThrowIfNull(fixture, nameof(fixture));
 
         Fixture = fixture;
         OracleTypeMapper.AddTypeHandler<Guid>(new GuidRaw16TypeHandler());

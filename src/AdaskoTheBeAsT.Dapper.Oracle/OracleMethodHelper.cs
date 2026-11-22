@@ -9,8 +9,8 @@ namespace AdaskoTheBeAsT.Dapper.Oracle;
 
 internal static class OracleMethodHelper
 {
-    private static readonly ConcurrentDictionary<Type, OracleParameterExpressions> CachedOracleTypes = new();
-    private static readonly ConcurrentDictionary<Type, CommandExpressions> CachedOracleCommandProperties = new();
+    private static readonly ConcurrentDictionary<Type, OracleParameterExpressions> _cachedOracleTypes = new();
+    private static readonly ConcurrentDictionary<Type, CommandExpressions> _cachedOracleCommandProperties = new();
 
     public static void SetArrayBindCount(
         IDbCommand command,
@@ -79,7 +79,7 @@ internal static class OracleMethodHelper
         ThrowHelper.ThrowIfNull(parameter, nameof(parameter));
         ThrowHelper.ThrowIfNull(oracleParameterInfo, nameof(oracleParameterInfo));
 
-        var method = CachedOracleTypes.GetOrAdd(parameter.GetType(), GetOracleProperties);
+        var method = _cachedOracleTypes.GetOrAdd(parameter.GetType(), GetOracleProperties);
 
         if (oracleParameterInfo.DbType.HasValue)
         {
@@ -149,7 +149,7 @@ internal static class OracleMethodHelper
 
     private static CommandExpressions Get(IDbCommand command)
     {
-        return CachedOracleCommandProperties.GetOrAdd(command.GetType(), static type => new CommandExpressions(type));
+        return _cachedOracleCommandProperties.GetOrAdd(command.GetType(), static type => new CommandExpressions(type));
     }
 
     private sealed class OracleParameterExpressions

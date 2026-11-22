@@ -17,18 +17,12 @@ namespace AdaskoTheBeAsT.Dapper.Oracle.Tests.Decorators;
     "Reliability",
     "CA2213:Disposable fields should be disposed",
     Justification = "Transaction is disposed in Dispose(bool); connection lifetime belongs to caller.")]
-public class DecoratedTransaction : DbTransaction
+public class DecoratedTransaction(
+    DbTransaction transaction,
+    DbConnection connection) : DbTransaction
 {
-    private DbConnection? _connection;
-    private DbTransaction? _transaction;
-
-    public DecoratedTransaction(
-        DbTransaction transaction,
-        DbConnection connection)
-    {
-        _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
-        _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-    }
+    private DbConnection? _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+    private DbTransaction? _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
 
     public DbTransaction? WrappedTransaction => _transaction;
 

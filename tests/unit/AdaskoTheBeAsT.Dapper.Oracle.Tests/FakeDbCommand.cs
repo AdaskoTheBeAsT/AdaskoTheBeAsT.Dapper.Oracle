@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+#if NETCOREAPP3_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
+#endif
+using AdaskoTheBeAsT.Dapper.Oracle.Util;
 
 namespace AdaskoTheBeAsT.Dapper.Oracle.Tests;
 
@@ -12,7 +15,9 @@ internal sealed class FakeDbCommand : DbCommand
     private readonly FakeDbParameterCollection _parameters = new();
     private string _commandText = string.Empty;
 
+#if NETCOREAPP3_0_OR_GREATER
     [AllowNull]
+#endif
     public override string CommandText
     {
         get => _commandText;
@@ -60,7 +65,9 @@ internal sealed class FakeDbCommand : DbCommand
 
         public override bool IsNullable { get; set; }
 
+#if NETCOREAPP3_0_OR_GREATER
         [AllowNull]
+#endif
         public override string ParameterName
         {
             get => _parameterName;
@@ -69,7 +76,9 @@ internal sealed class FakeDbCommand : DbCommand
 
         public override int Size { get; set; }
 
+#if NETCOREAPP3_0_OR_GREATER
         [AllowNull]
+#endif
         public override string SourceColumn
         {
             get => _sourceColumn;
@@ -101,7 +110,7 @@ internal sealed class FakeDbCommand : DbCommand
 
         public override void AddRange(Array values)
         {
-            ArgumentNullException.ThrowIfNull(values);
+            ThrowHelper.ThrowIfNull(values, nameof(values));
             foreach (var item in values)
             {
                 if (item != null)
